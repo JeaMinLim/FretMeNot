@@ -121,19 +121,23 @@ pub fn setup_fonts(cc: &CreationContext) {
 
     fonts.font_data.insert(
         "Regular".to_owned(),
-       FontData::from_owned(std::fs::read("fonts/NanumGothic-Regular.ttf").unwrap()),
+       //FontData::from_owned(std::fs::read("fonts/NanumGothic-Regular.ttf").unwrap()),
+       FontData::from_static(include_bytes!("../fonts/NanumGothic-Regular.ttf")),
     );
     fonts.font_data.insert(
         "Bold".to_owned(),
-        FontData::from_owned(std::fs::read("fonts/NanumGothic-Bold.ttf").unwrap()),
+        //FontData::from_owned(std::fs::read("fonts/NanumGothic-Bold.ttf").unwrap()),
+        FontData::from_static(include_bytes!("../fonts/NanumGothic-Bold.ttf")),
     );
     fonts.font_data.insert(
         "ExtraBold".to_owned(),
-        FontData::from_owned(std::fs::read("fonts/NanumGothic-ExtraBold.ttf").unwrap()),
+        //FontData::from_owned(std::fs::read("fonts/NanumGothic-ExtraBold.ttf").unwrap()),
+        FontData::from_static(include_bytes!("../fonts/NanumGothic-ExtraBold.ttf")),
     );
     fonts.font_data.insert(
         "Emoji".to_owned(),
-        FontData::from_owned(std::fs::read("fonts/NotoEmoji-VariableFont_wght.ttf").unwrap()),
+        //FontData::from_owned(std::fs::read("fonts/NotoEmoji-VariableFont_wght.ttf").unwrap()),
+        FontData::from_static(include_bytes!("../fonts/NotoEmoji-VariableFont_wght.ttf")),
     );
 
     // Proportional에 Emoji -> Regular 순서로 등록
