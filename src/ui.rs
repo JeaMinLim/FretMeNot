@@ -141,19 +141,26 @@ pub fn setup_fonts(cc: &CreationContext) {
     );
 
     // Proportional에 Emoji -> Regular 순서로 등록
-    if let Some(family) = fonts.families.get_mut(&FontFamily::Proportional) {
-        family.clear();
-        family.push("Emoji".to_owned());
-        family.push("Regular".to_owned());
-    }
+    //if let Some(family) = fonts.families.get_mut(&FontFamily::Proportional) {
+        //family.clear();
+        //family.push("Emoji".to_owned());
+        //family.push("Regular".to_owned());
+    //}
 
     // 사용자 정의 굵기 등록
-    fonts
+    //fonts
+        //.families
+        //.insert(FontFamily::Name("Bold".into()), vec!["Bold".to_owned()]);
+    //fonts
+        //.families
+        //.insert(FontFamily::Name("ExtraBold".into()), vec!["ExtraBold".to_owned()]);
+
+    fonts  
         .families
-        .insert(FontFamily::Name("Bold".into()), vec!["Bold".to_owned()]);
-    fonts
-        .families
-        .insert(FontFamily::Name("ExtraBold".into()), vec!["ExtraBold".to_owned()]);
+        .entry(egui::FontFamily::Proportional)
+        .or_default()
+        .insert(0, "Regular".to_owned());
 
     cc.egui_ctx.set_fonts(fonts);
+    
 }
