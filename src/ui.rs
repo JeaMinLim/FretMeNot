@@ -1,5 +1,5 @@
 use eframe::egui::{
-    self, CentralPanel, Context, FontData, FontDefinitions, FontFamily, RichText, Ui,
+    self, CentralPanel, Context, FontData, FontDefinitions, RichText, Ui, Color32, Label, FontId,
 };
 use eframe::{App, CreationContext};
 
@@ -65,43 +65,79 @@ impl App for FretMeNotApp {
     }
 }
 
-// 프렛보드 간단히 표시 (예제용)
-//fn TabShowFrets(ui: &mut Ui) {
-    //ui.label(RichText::new("기타 지판").strong());
-
-//    for string in (1..=6).rev() {
-//        ui.horizontal(|ui| {
-//            for fret in 0..=5 {
-//                ui.label(format!("{}-{}", string, fret));
-//            }
-//        });
-//    }
-
 fn tab_show_frets(ui: &mut Ui) {
-    let strings = ["1번줄", "2번줄", "3번줄", "4번줄", "5번줄", "6번줄"];
-    let frets = 0..=24;
+    use egui::ScrollArea;
+    static mut START_FRET: i32 = 0;
+    static mut END_FRET: i32 = 24;
 
-    egui::Grid::new("fretboard")
-        .striped(true)
-        .spacing([4.0, 8.0])
-        .show(ui, |ui| {
-            // 헤더 (프렛 번호)
-            ui.label(" "); // 왼쪽 상단 빈칸
-            for fret in frets.clone() {
-                ui.label(format!("{}", fret));
-            }
-            ui.end_row();
+    let string_name = ["1번줄", "2번줄", "3번줄", "4번줄", "5번줄", "6번줄"];
+    let first_fret_notes = ["E", "B", "G", "D", "A", "E"];
+    let max_fret = 24;
 
-            // 줄별 프렛
-            for string in strings.iter() {
-                ui.label(*string);
-                for _fret in frets.clone() {
-                    // TODO: 여기서 음 이름을 계산해 넣을 수 있음
-                    ui.label("●"); // 또는 "C", "F#" 등
-                }
-                ui.end_row();
-            }
+    unsafe {
+        ui.horizontal(|ui| {
+            ui.label("카포:");
+            ui.add(egui::Slider::new(&mut START_FRET, 0..=END_FRET.min(max_fret)).text(""));
+            ui.label("끝 프렛:");
+            ui.add(egui::Slider::new(&mut END_FRET, START_FRET..=max_fret).text(""));
         });
+
+        ui.separator();
+
+        ScrollArea::horizontal().show(ui, |ui| {
+            egui::Grid::new("fretboard")
+                .striped(true)
+                .spacing([8.0, 8.0])
+                .min_col_width(20.0)
+                .min_row_height(20.0)
+                .show(ui, |ui| {
+                    // 헤더 (프렛 번호)
+                    ui.label(" ");
+                    for fret in 0..=max_fret {
+                        ui.add(Label::new(
+                            RichText::new(format!("{}", fret))
+                                .font(FontId::proportional(18.0))
+                                .color(Color32::from_rgb(255, 255, 255))
+                                .strong(),
+                        ));
+                    }
+                    ui.end_row();
+
+                    // 줄별 프렛
+                    for (i, string_number) in string_name.iter().enumerate() {
+                        ui.add(Label::new(
+                            RichText::new(*string_number)
+                                .font(FontId::proportional(18.0))
+                                .color(Color32::from_rgb(255, 255, 255))
+                                .strong(),
+                        ));
+
+                        for fret in 0..=max_fret {
+                            if fret < START_FRET || fret > END_FRET {
+                                ui.label(""); // 칸은 표시하되 음은 없음
+                            } else if fret == 0 {
+                                ui.label(first_fret_notes[i]);
+                            } else {
+                                let fret_offset = fret - 1;
+                                ui.label(calculate_note(first_fret_notes[i], fret_offset as usize));
+                            }
+                        }
+                        ui.end_row();
+                    }
+                });
+        });
+    }
+}
+
+fn calculate_note(start_note: &str, fret_offset: usize) -> String {
+    let notes = ["E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"];
+
+    // 시작 음의 인덱스를 찾음
+    let start_index = notes.iter().position(|&n| n == start_note).unwrap() + 1 ; 
+
+    // 프렛 이동 후 음계 계산
+    let note_index = (start_index + fret_offset) % notes.len();
+    notes[note_index].to_string()
 }
 
 fn tab_settings(ui: &mut Ui) {

@@ -10,8 +10,8 @@ mod ui; // ui.rs 파일을 모듈로 선언
 fn main() {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1200.0, 600.0]) // 창 크기 설정
-            .with_min_inner_size([1200.0, 600.0]), // 최소 크기 설정
+            .with_inner_size([1300.0, 600.0]) // 창 크기 설정
+            .with_min_inner_size([1300.0, 860.0]), // 최소 크기 설정
         ..Default::default()
     };
 
